@@ -6,8 +6,7 @@
 package chat;
 
 /**
- *
- * @author Heinz
+ * stellt die Befehel zu Verfügung, die gebraucht werden
  */
 public class Commands {
 
@@ -15,20 +14,20 @@ public class Commands {
 
         public static final String loginSucessfull = "s";
         public static final String userTable = "t";
-        public static final String logout = "x byebye";
+        public static final String logout = "x";
         public static final String error = "e";
 
     }
 
     public class Client {
 
-        public static final String clientLogin = "n";
-        public static final String clientMessage = "m";
+        public static final String login = "n";
+        public static final String message = "m";
     }
 
     public class UserInput {
 
-        public static final String whoIsOnline = "Whoisonline";
+        public static final String whoIsOnline = "whoisonline";
         public static final String help = "help";
         public static final String quit = "quit";
         public static final String message = "@";

@@ -12,17 +12,17 @@ import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- *
- * @author Heinz
- */
 public class Chat {
 
     /**
+     * Wartet auf IP-Adressen und Nutzernameneingabe - Bei erfolgreicher
+     * Anmeldung: Verbindung zum Server
+     *
      * @param args the command line arguments
      */
     public static void main(String[] args) {
@@ -38,37 +38,50 @@ public class Chat {
 
             //String ipServer = "";
             //String ipClient = ipServer;
-            int clientPort = 2540;
-
+            System.out.println("Port eingeben:");
+            boolean isPortInt = false;
+            int clientPort = 0;
+            while (!isPortInt) {
+                try {
+                    clientPort = scanner.nextInt();
+                    isPortInt = true;
+                } catch (InputMismatchException e) {
+                    System.out.println("Gib eine Zahl ein");
+                }
+            }
             Socket mySocket = new Socket();
-            mySocket.connect(new InetSocketAddress(serverIp, serverPort));
-
+            try {
+                mySocket.connect(new InetSocketAddress(serverIp, serverPort));
+            } catch (Exception e) {
+                System.out.println("Die IP-Adresse ist falsch");
+            }
             ServerSocket ssocket = new ServerSocket();
             ssocket.bind(new InetSocketAddress(clientPort));
 
             PrintWriter out = new PrintWriter(mySocket.getOutputStream(), true);
             BufferedReader in = new BufferedReader(new InputStreamReader(mySocket.getInputStream()));
-
             String userInput = "";
 
             //String userName = "";
-            System.out.println("Please choose a username. NO spaces");
+            System.out.println("Please choose a username. If your input contains spaces the first will be your name!");
             userInput = scanner.next();
             User user = new User();
+
+//            if (userInput.contains(" ")) {
+//                userInput = userInput.replaceAll(" ", "");
+//                System.out.println("Your spaces got removed automatically");
+//            }
             user.setName(userInput);
             user.setPort(clientPort);
 
-            if (userInput.contains(" ")) {
-                userInput = userInput.replaceAll(" ", "");
-            }
-
-            out.write(String.format("%s %s %s\n", "n", userInput, clientPort));
+            out.write(String.format("%s %s %s\n", Commands.Client.login, userInput, clientPort));
             out.flush();
             String answer = in.readLine();
-            if (answer.equals("s")) {
+            if (answer.equals(Commands.Server.loginSucessfull)) {
                 System.out.println("Hello " + userInput + "! You may now chat.");
-            } else if (answer.startsWith("e")) {
+            } else if (answer.startsWith(Commands.Server.error)) {
                 System.out.println(answer.substring(2, answer.length()));
+                //schauen welche Fehlermeldung kommt
             } else {
                 throw new RuntimeException("unknown answer from server");
             }
@@ -78,11 +91,6 @@ public class Chat {
 
             UserInput input = new UserInput(contactHandler);
             input.start();
-//            makeContactThread myContacts = new makeContactThread(ssocket, mySocket, in, out, userInput);
-//            myContacts.start();
-
-//            UserInput userInputThread = new UserInput(myContacts);
-//            userInputThread.start();
         } catch (IOException ex) {
             Logger.getLogger(Chat.class.getName()).log(Level.SEVERE, null, ex);
         }

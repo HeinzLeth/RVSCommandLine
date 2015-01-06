@@ -1,22 +1,16 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package chat;
 
 import java.util.ArrayList;
 
 /**
- *
- * @author Heinz
+ * repräsentiert einen Benutzer
  */
 public class User {
 
     private String name;
     private String ip;
     private int port;
-
+    
     public User() {
         this.name = "";
         this.ip = "";
@@ -29,6 +23,11 @@ public class User {
         this.port = 0;
     }   
 
+    /**
+     * Erstellt User Objekte aus der Textbasierten Tabelle 
+     * @param userTable: übergibt die Tabelle mit allen Benutzerdaten
+     * @return ArrayList<User>
+     */
     public static ArrayList<User> getUsersFromUserTable(String userTable) {
         String[] rows = userTable.split("\n");
         ArrayList<User> users = new ArrayList<>();

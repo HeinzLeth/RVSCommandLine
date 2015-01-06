@@ -20,7 +20,6 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author Heinz
  */
 public class ContactHandler extends Thread {
 
@@ -68,7 +67,7 @@ public class ContactHandler extends Thread {
                         peer = new Socket();
                         peer.connect(new InetSocketAddress(onlineUser.getIp(), onlineUser.getPort()));
 
-                        Connection connection = new Connection(peer);
+                        Connection connection = new Connection(peer, onlineUser);
                         connections.add(connection);
                         connection.start();
                         connection.makeFirstContact(user);
@@ -87,7 +86,7 @@ public class ContactHandler extends Thread {
 
     public void showOnline() {
         try {
-            toServer.write("t\n");
+            toServer.write(Commands.Server.userTable + "\n");
             toServer.flush();
             String string = fromServer.readLine();
 
@@ -135,7 +134,7 @@ public class ContactHandler extends Thread {
                 connection.start();
                 connections.add(connection);
             } catch (SocketException exception) {
-                System.out.println("ServerSocket shut down");
+                System.out.println("ServerSocket closed");
             } catch (IOException ex) {
                 Logger.getLogger(ContactHandler.class.getName()).log(Level.SEVERE, null, ex);
             }
