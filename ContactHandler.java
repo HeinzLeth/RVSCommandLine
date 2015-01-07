@@ -66,7 +66,6 @@ public class ContactHandler extends Thread {
                     try {
                         peer = new Socket();
                         peer.connect(new InetSocketAddress(onlineUser.getIp(), onlineUser.getPort()));
-
                         Connection connection = new Connection(peer, onlineUser);
                         connections.add(connection);
                         connection.start();
@@ -140,4 +139,10 @@ public class ContactHandler extends Thread {
             }
         }
     }
+
+	public User getUser() {
+		return user;
+	}
+    
+    
 }

@@ -4,10 +4,6 @@
  * and open the template in the editor.
  */
 
-//Abfrage wegen doppelter Namen
-//senden des Namens bei erster Nachricht
-//abfangen an sich selber schreiben
-//falscher port oder kein int
 
 
 package chat;
@@ -111,9 +107,13 @@ public class Connection extends Thread {
                     String clientMessage = input.substring(2);
                     System.out.println(user.getName() + ": " + clientMessage);
                 } else if (input.startsWith(Commands.Server.logout)) {
-                    String clientMessage = input.substring(2);
-                    System.out.println(user.getName() + ": " + clientMessage);
-                    System.out.println(user.getName() + " has left the chat and is offline.");
+                    if (input.length()>1) {
+                        String clientMessage = input.substring(2);
+                        System.out.println(user.getName() + ": " + clientMessage);
+                        System.out.println(user.getName() + " has left the chat and is offline.");
+                    } else {
+                        System.out.println(user.getName() + " has left the chat and is offline.");
+                    }
                     peer.close();
                     this.terminate();
                 }

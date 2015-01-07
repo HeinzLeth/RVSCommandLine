@@ -1,5 +1,5 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
+safdf * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
@@ -17,40 +17,44 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/*
+* Echo sendet befehl "n NAME" vom Sender zurück. Im Verlauf also auch mit sender namen??? Testclient so nicht
+* Echo crasht nachdem wir ausloggen. Testclient nicht??
+* */
+
 public class Chat {
 
     /**
-     * Wartet auf IP-Adressen und Nutzernameneingabe - Bei erfolgreicher
-     * Anmeldung: Verbindung zum Server
+     * Wartet auf Server-IP-Adressen-,Port- und Nutzernameneingabe.
+     * Bei erfolgreicher Eingabe: Verbindung zum Server
      *
      * @param args the command line arguments
      */
     public static void main(String[] args) {
         try {
-            // TODO code application logic here            
 
             int serverPort = 2534;
 
             BufferedReader userIn = new BufferedReader(new InputStreamReader(System.in));
-            //Scanner scanner = new Scanner(System.in);
 
             Socket mySocket = null;
             int clientPort = 0;
             boolean isCorrectIp = false;
             while (!isCorrectIp) {
-                System.out.println("Server ip eingeben:");
+                System.out.println("Type in server-IP-address");
                 String serverIp = userIn.readLine();
 
-                //String ipServer = "";
-                //String ipClient = ipServer;
-                System.out.println("Port eingeben:");
                 boolean isPortInt = false;
                 while (!isPortInt) {
                     try {
+                        System.out.println("Choose a port between 50000 & 65000:");
                         clientPort = Integer.parseInt(userIn.readLine());
-                        isPortInt = true;
+                        if (clientPort > 49999 && clientPort < 65001) {
+                            isPortInt = true;
+						}
+                       
                     } catch (NumberFormatException e) {
-                        System.out.println("Gib eine Zahl ein");
+                        System.out.println("A port consists of integers!");
                     }
                 }
                 try {
@@ -58,7 +62,7 @@ public class Chat {
                     mySocket.connect(new InetSocketAddress(serverIp, serverPort));
                     isCorrectIp = true;
                 } catch (Exception e) {
-                    System.out.println("Die IP-Adresse ist falsch");
+                    System.out.println("Wrong server-IP-address!");
                 }
             }
             ServerSocket ssocket = new ServerSocket();
@@ -68,7 +72,7 @@ public class Chat {
             BufferedReader in = new BufferedReader(new InputStreamReader(mySocket.getInputStream()));
             String userInput = "";
 
-            //String userName = "";
+
             User user = new User();
             boolean isConnected = false;
             while (!isConnected) {
