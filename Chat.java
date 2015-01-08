@@ -1,5 +1,5 @@
 /*
-safdf * To change this license header, choose License Headers in Project Properties.
+ safdf * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
@@ -18,15 +18,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /*
-* Echo sendet befehl "n NAME" vom Sender zurück. Im Verlauf also auch mit sender namen??? Testclient so nicht
-* Echo crasht nachdem wir ausloggen. Testclient nicht??
-* */
-
+ * Echo crasht nachdem wir ausloggen. Testclient nicht??
+ * */
 public class Chat {
 
     /**
-     * Wartet auf Server-IP-Adressen-,Port- und Nutzernameneingabe.
-     * Bei erfolgreicher Eingabe: Verbindung zum Server
+     * Wartet auf Server-IP-Adressen-,Port- und Nutzernameneingabe. Bei
+     * erfolgreicher Eingabe: Verbindung zum Server
      *
      * @param args the command line arguments
      */
@@ -44,6 +42,7 @@ public class Chat {
                 System.out.println("Type in server-IP-address");
                 String serverIp = userIn.readLine();
 
+                //Abfrage bis ein valider Port eingegeben wurde
                 boolean isPortInt = false;
                 while (!isPortInt) {
                     try {
@@ -51,12 +50,13 @@ public class Chat {
                         clientPort = Integer.parseInt(userIn.readLine());
                         if (clientPort > 49999 && clientPort < 65001) {
                             isPortInt = true;
-						}
-                       
+                        }
+
                     } catch (NumberFormatException e) {
                         System.out.println("A port consists of integers!");
                     }
                 }
+                //Abfrage ob der Server unter der IP-Adresse zu erreichen ist, falls nicht neuer Versuch.
                 try {
                     mySocket = new Socket();
                     mySocket.connect(new InetSocketAddress(serverIp, serverPort));
@@ -68,11 +68,12 @@ public class Chat {
             ServerSocket ssocket = new ServerSocket();
             ssocket.bind(new InetSocketAddress(clientPort));
 
+            //Reader für Socket-Eingang und Writer für Socket-Ausgang
             PrintWriter out = new PrintWriter(mySocket.getOutputStream(), true);
             BufferedReader in = new BufferedReader(new InputStreamReader(mySocket.getInputStream()));
             String userInput = "";
 
-
+            //Der eigene Benutzername wird als User abgespeichert
             User user = new User();
             boolean isConnected = false;
             while (!isConnected) {
@@ -87,6 +88,7 @@ public class Chat {
                 user.setName(userInput);
                 user.setPort(clientPort);
 
+                //Formatiert die Eingabe gemäß Protokoll zum korrekten Senden des Logins an den Server 
                 out.write(String.format("%s %s %s\n", Commands.Client.login, userInput, clientPort));
                 out.flush();
                 String answer = in.readLine();
@@ -94,22 +96,24 @@ public class Chat {
                     System.out.println("Hello " + userInput + "! You may now chat.");
                     isConnected = true;
                 } else if (answer.startsWith(Commands.Server.error)) {
+                    //Ausgabe der Fehlermeldung, die der Server zurückschickt
                     String error = answer.substring(2, answer.length());
                     System.out.println(error);
                 } else {
                     throw new RuntimeException("unknown answer from server");
                 }
             }
+            //Erstellen des Thread zum Warten auf neue Verbindungen
             ContactHandler contactHandler = new ContactHandler(ssocket, mySocket, in, out, user);
             contactHandler.start();
 
+            //Erstllen des Thread zum Warten auf die Eingaben des Benutzers
             UserInput input = new UserInput(contactHandler);
             input.start();
 
         } catch (IOException ex) {
-            Logger.getLogger(Chat.class.getName()).log(Level.SEVERE, null, ex);
+            System.err.println("Fehler im Program");
         }
-
     }
 
 }

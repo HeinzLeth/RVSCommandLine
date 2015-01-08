@@ -21,7 +21,7 @@ import java.util.logging.Logger;
 /**
  *
  */
-public class ContactHandler extends Thread {
+public class ContactHandler extends Thread implements Connection.DeleteUserListener{
 
     private final ServerSocket serverSocket;
     private final Socket clientSocket;
@@ -68,6 +68,7 @@ public class ContactHandler extends Thread {
                         peer.connect(new InetSocketAddress(onlineUser.getIp(), onlineUser.getPort()));
                         Connection connection = new Connection(peer, onlineUser);
                         connections.add(connection);
+                        connection.registerListener(this);
                         connection.start();
                         connection.makeFirstContact(user);
                         connection.sendMessage(message);
@@ -131,6 +132,7 @@ public class ContactHandler extends Thread {
                 peer = serverSocket.accept();
                 Connection connection = new Connection(peer);
                 connection.start();
+                connection.registerListener(this);
                 connections.add(connection);
             } catch (SocketException exception) {
                 System.out.println("ServerSocket closed");
@@ -143,6 +145,12 @@ public class ContactHandler extends Thread {
 	public User getUser() {
 		return user;
 	}
+
+    @Override
+    public void deleteUser(User user, Connection connection) {
+        this.onlineUsers.remove(user);
+        this.connections.remove(connection);
+    }
     
     
 }

@@ -19,84 +19,84 @@ import java.util.logging.Logger;
  */
 public class UserInput extends Thread {
 
-	private Scanner scanner;
-	private ContactHandler contactHandler;
-	private boolean terminate;
-	private BufferedReader in;
+    private Scanner scanner;
+    private ContactHandler contactHandler;
+    private boolean terminate;
+    private BufferedReader in;
 
-	public UserInput(ContactHandler ch) {
-		scanner = new Scanner(System.in);
-		this.contactHandler = ch;
-		this.terminate = false;
-	}
+    public UserInput(ContactHandler ch) {
+        scanner = new Scanner(System.in);
+        this.contactHandler = ch;
+        this.terminate = false;
+    }
 
-	public void showHelpTable() {
-		System.out.println("-----------------Help---------------");
-		System.out.println("#help             :    shows HelpTable");
-		System.out.println("#whoisonline      :    shows who is online on the server");
-		System.out.println("#quit             :    closes all connections and goes offline");
-		System.out.println("@NAME             :    sends message to NAME");
-	}
+    public void showHelpTable() {
+        System.out.println("-----------------Help---------------");
+        System.out.println("#help             :    shows HelpTable");
+        System.out.println("#whoisonline      :    shows who is online on the server");
+        System.out.println("#quit             :    closes all connections and goes offline");
+        System.out.println("@NAME             :    sends message to NAME");
+    }
 
-	@Override
-	public void run() {
+    @Override
+    public void run() {
 
-		try {
-			in = new BufferedReader(new InputStreamReader(System.in,
-					StandardCharsets.UTF_8.name()));
-			while (!terminate) {
-				try {
-					String input = in.readLine();
-					String[] commandSplit = input.split(" ", 2);
+        try {
+            in = new BufferedReader(new InputStreamReader(System.in,
+                    StandardCharsets.UTF_8.name()));
+            while (!terminate) {
+                try {
+                    String input = in.readLine();
+                    String[] commandSplit = input.split(" ", 2);
 
-					if (commandSplit.length == 1) {
-						if (commandSplit[0].startsWith("#")) {
-							commandSplit[0] = commandSplit[0].substring(1);
-							switch (commandSplit[0]) {
-							case Commands.UserInput.whoIsOnline:
-								contactHandler.printOnline();
-								break;
-							case Commands.UserInput.help:
-								showHelpTable();
-								break;
-							case Commands.UserInput.quit:
-								contactHandler.closeAll();
-								this.terminate = true;
-								break;
-							default:
-								System.out.println("Wrong input. Type in #help");
-								break;
-							}
-						} else {
-							System.out.println("# is the command character!");
-							showHelpTable();
-						}
-					} else if (commandSplit.length == 2) {
-						if (commandSplit[0]
-								.startsWith(Commands.UserInput.message)) {
-							if (!contactHandler.getUser().getName()
-									.equals(commandSplit[0].substring(1))) {
-								contactHandler.sendMessage(new User(
-										commandSplit[0].substring(1)),
-										commandSplit[1]);
-							} else {
-								System.out.println("You cannot chat with yourself!");
-							}
-						} else {
-							showHelpTable();
-						}
-					} else {
+                    if (commandSplit.length == 1) {
+                        if (commandSplit[0].startsWith("#")) {
+                            commandSplit[0] = commandSplit[0].substring(1);
+                            switch (commandSplit[0]) {
+                                case Commands.UserInput.whoIsOnline:
+                                    contactHandler.printOnline();
+                                    break;
+                                case Commands.UserInput.help:
+                                    showHelpTable();
+                                    break;
+                                case Commands.UserInput.quit:
+                                    contactHandler.closeAll();
+                                    this.terminate = true;
+                                    break;
+                                default:
+                                    System.out.println("Wrong input. Type in #help");
+                                    break;
+                            }
+                        } else {
+                            System.out.println("# is the command character!");
+                            showHelpTable();
+                        }
+                    } else if (commandSplit.length == 2) {
+                        if (commandSplit[0]
+                                .startsWith(Commands.UserInput.message)) {
+                            if (!contactHandler.getUser().getName()
+                                    .equals(commandSplit[0].substring(1))) {
+                                contactHandler.sendMessage(new User(
+                                        commandSplit[0].substring(1)),
+                                        commandSplit[1]);
+                            } else {
+                                System.out.println("You cannot chat with yourself!");
+                            }
+                        } else {
+                            showHelpTable();
+                        }
+                    } else {
 
-					}
-				} catch (IOException ex) {
-					Logger.getLogger(UserInput.class.getName()).log(
-							Level.SEVERE, null, ex);
-				}
-			}
-		} catch (UnsupportedEncodingException ex) {
-			Logger.getLogger(UserInput.class.getName()).log(Level.SEVERE, null,
-					ex);
-		}
-	}
+                    }
+                } catch (IOException ex) {
+                    Logger.getLogger(UserInput.class.getName()).log(
+                            Level.SEVERE, null, ex);
+                }
+            }
+        } catch (UnsupportedEncodingException ex) {
+            Logger.getLogger(UserInput.class.getName()).log(Level.SEVERE, null,
+                    ex);
+        }
+    }
 
 }

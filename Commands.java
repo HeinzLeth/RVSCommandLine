@@ -6,7 +6,7 @@
 package chat;
 
 /**
- * stellt die Befehel zu Verfügung, die gebraucht werden
+ * stellt die Befehle zu Verfügung, die gebraucht werden
  */
 public class Commands {
 

@@ -3,9 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
-
-
 package chat;
 
 import java.io.BufferedReader;
@@ -23,11 +20,17 @@ import java.util.logging.Logger;
  */
 public class Connection extends Thread {
 
+    public interface DeleteUserListener {
+        public void deleteUser(User user, Connection connection);
+    }
+
     private Socket peer;
     private BufferedReader in;
     private PrintWriter out;
     private User user;
     private boolean terminate;
+    private boolean isNameSet;
+    private DeleteUserListener deleteUserListener;
 
     public Connection(Socket socket, User user) {
         try {
@@ -36,10 +39,11 @@ public class Connection extends Thread {
             this.out = new PrintWriter(peer.getOutputStream(), true);
             this.user = user;
             this.terminate = false;
+            this.isNameSet = true;
         } catch (IOException ex) {
-            Logger.getLogger(Connection.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+
     public Connection(Socket socket) {
         try {
             this.peer = socket;
@@ -47,9 +51,14 @@ public class Connection extends Thread {
             this.out = new PrintWriter(peer.getOutputStream(), true);
             this.user = new User();
             this.terminate = false;
+            this.isNameSet = false;
         } catch (IOException ex) {
             Logger.getLogger(Connection.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    public void registerListener(DeleteUserListener listener){
+        this.deleteUserListener = listener;
     }
 
     public User getUser() {
@@ -58,6 +67,7 @@ public class Connection extends Thread {
 
     private void terminate() {
         this.terminate = true;
+        this.deleteUserListener.deleteUser(user, this);
     }
 
     /**
@@ -101,13 +111,14 @@ public class Connection extends Thread {
 
             try {
                 String input = this.in.readLine();
-                if (input.startsWith(Commands.Client.login)) {
+                if (!isNameSet && input.startsWith(Commands.Client.login)) {
                     user.setName(input.substring(1));
+                    this.isNameSet = true;
                 } else if (input.startsWith(Commands.Client.message)) {
                     String clientMessage = input.substring(2);
                     System.out.println(user.getName() + ": " + clientMessage);
                 } else if (input.startsWith(Commands.Server.logout)) {
-                    if (input.length()>1) {
+                    if (input.length() > 1) {
                         String clientMessage = input.substring(2);
                         System.out.println(user.getName() + ": " + clientMessage);
                         System.out.println(user.getName() + " has left the chat and is offline.");
@@ -118,11 +129,24 @@ public class Connection extends Thread {
                     this.terminate();
                 }
             } catch (SocketException e) {
-
+                if (!peer.isClosed()) {
+                    try {
+                        peer.close();
+                        this.terminate();
+                        System.out.println(user.getName() + " has unexpected left the chat and is offline.");
+                    } catch (IOException ex) {
+                        Logger.getLogger(Connection.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
             } catch (IOException ex) {
                 Logger.getLogger(Connection.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
 
     }
+
+    public void setIsNameSet(boolean isNameSet) {
+        this.isNameSet = isNameSet;
+    }
+
 }
