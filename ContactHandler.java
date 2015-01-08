@@ -21,7 +21,7 @@ import java.util.logging.Logger;
 /**
  *
  */
-public class ContactHandler extends Thread implements Connection.DeleteUserListener{
+public class ContactHandler extends Thread implements Connection.DeleteUserListener {
 
     private final ServerSocket serverSocket;
     private final Socket clientSocket;
@@ -46,10 +46,17 @@ public class ContactHandler extends Thread implements Connection.DeleteUserListe
         this.connections = new LinkedList<>();
     }
 
+    /**
+     * Sendet neue Nachricht an uebergebene Nachricht
+     *
+     * @param u
+     * @param message
+     */
     public void sendMessage(User u, String message) {
 
         boolean sent = false;
 
+        //Geht die Liste der Verbindungen durch und schaut, ob bereits eine Verbindung besteht.
         Iterator<Connection> iterator = connections.iterator();
         while (iterator.hasNext() && !sent) {
             Connection connection = iterator.next();
@@ -58,11 +65,13 @@ public class ContactHandler extends Thread implements Connection.DeleteUserListe
                 sent = true;
             }
         }
+        //Wenn nicht wird beim Server die Liste der aktuell eingeloggten Benutzer abgefragt und durchgegangen.
         if (!sent) {
-            this.showOnline();
+            this.receiveAndStoreOnlineUsers();
             for (User onlineUser : onlineUsers) {
                 if (onlineUser.equals(u)) {
 
+                    //Es wird ein neuer Socket erzeugt mit den vom Server uebergebenen Benutzerdaten.
                     try {
                         peer = new Socket();
                         peer.connect(new InetSocketAddress(onlineUser.getIp(), onlineUser.getPort()));
@@ -79,34 +88,43 @@ public class ContactHandler extends Thread implements Connection.DeleteUserListe
                 }
             }
         }
+        //Falls kein Benutzer mit diesem Namen existiert, wird dies angezeigt.
         if (!sent) {
             System.out.println("No such User online");
         }
     }
 
-    public void showOnline() {
+    /**
+     * Holt sich die Online-Tabelle vom Server
+     */
+    public void receiveAndStoreOnlineUsers() {
         try {
-            toServer.write(Commands.Server.userTable + "\n");
+            toServer.write(Commands.Server.userTable + "%n");
             toServer.flush();
             String string = fromServer.readLine();
 
             String userTable = "";
             for (int i = 0; i < Integer.valueOf(String.valueOf(string.charAt(2))); i++) {
-                userTable += fromServer.readLine() + "\n";
+                userTable += fromServer.readLine() + "%n";
             }
             onlineUsers = User.getUsersFromUserTable(userTable);
         } catch (IOException ex) {
-            Logger.getLogger(ContactHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
+    /**
+     * Zeigt die Online-User an.
+     */
     public void printOnline() {
-        this.showOnline();
+        this.receiveAndStoreOnlineUsers();
         for (User u : onlineUsers) {
             System.out.println(u.getName());
         }
     }
 
+    /**
+     * Schließt alle Verbidungen die es gibt.
+     */
     public void closeAll() {
         try {
             Iterator<Connection> iter = connections.iterator();
@@ -117,7 +135,6 @@ public class ContactHandler extends Thread implements Connection.DeleteUserListe
             serverSocket.close();
             clientSocket.close();
         } catch (IOException ex) {
-            Logger.getLogger(ContactHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -137,20 +154,23 @@ public class ContactHandler extends Thread implements Connection.DeleteUserListe
             } catch (SocketException exception) {
                 System.out.println("ServerSocket closed");
             } catch (IOException ex) {
-                Logger.getLogger(ContactHandler.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
 
-	public User getUser() {
-		return user;
-	}
+    public User getUser() {
+        return user;
+    }
 
+    /**
+     * löscht den User und die Verbindung aus den Listen
+     * @param user
+     * @param connection
+     */
     @Override
     public void deleteUser(User user, Connection connection) {
         this.onlineUsers.remove(user);
         this.connections.remove(connection);
     }
-    
-    
+
 }

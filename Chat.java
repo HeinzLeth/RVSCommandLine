@@ -12,10 +12,6 @@ import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.InputMismatchException;
-import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /*
  * Echo crasht nachdem wir ausloggen. Testclient nicht??
@@ -89,7 +85,7 @@ public class Chat {
                 user.setPort(clientPort);
 
                 //Formatiert die Eingabe gemäß Protokoll zum korrekten Senden des Logins an den Server 
-                out.write(String.format("%s %s %s\n", Commands.Client.login, userInput, clientPort));
+                out.write(String.format("%s %s %s%n", Commands.Client.login, userInput, clientPort));
                 out.flush();
                 String answer = in.readLine();
                 if (answer.equals(Commands.Server.loginSucessfull)) {

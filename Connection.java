@@ -20,7 +20,11 @@ import java.util.logging.Logger;
  */
 public class Connection extends Thread {
 
+    /**
+     * Listener zum löschen der Verbinung im ContactHandler
+     */
     public interface DeleteUserListener {
+
         public void deleteUser(User user, Connection connection);
     }
 
@@ -56,8 +60,8 @@ public class Connection extends Thread {
             Logger.getLogger(Connection.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    public void registerListener(DeleteUserListener listener){
+
+    public void registerListener(DeleteUserListener listener) {
         this.deleteUserListener = listener;
     }
 
@@ -76,7 +80,7 @@ public class Connection extends Thread {
      * @param user
      */
     public void makeFirstContact(User user) {
-        this.out.write(String.format("%s %s\n", Commands.Client.login, user.getName()));
+        this.out.write(String.format("%s %s%n", Commands.Client.login, user.getName()));
         this.out.flush();
     }
 
@@ -86,7 +90,7 @@ public class Connection extends Thread {
      * @param message
      */
     public void sendMessage(String message) {
-        this.out.write(String.format("%s %s\n", Commands.Client.message, message));
+        this.out.write(String.format("%s %s%n", Commands.Client.message, message));
         this.out.flush();
     }
 
@@ -95,12 +99,11 @@ public class Connection extends Thread {
      */
     public void closeConnection() {
         try {
-            this.out.write(Commands.Server.logout + "\n");
+            this.out.write(Commands.Server.logout + "%n");
             this.out.flush();
             this.terminate();
             this.peer.close();
         } catch (IOException ex) {
-            Logger.getLogger(Connection.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -128,6 +131,7 @@ public class Connection extends Thread {
                     peer.close();
                     this.terminate();
                 }
+                //wenn der Benutzer ohne logout den Chat verlässt
             } catch (SocketException e) {
                 if (!peer.isClosed()) {
                     try {
@@ -135,11 +139,9 @@ public class Connection extends Thread {
                         this.terminate();
                         System.out.println(user.getName() + " has unexpected left the chat and is offline.");
                     } catch (IOException ex) {
-                        Logger.getLogger(Connection.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
             } catch (IOException ex) {
-                Logger.getLogger(Connection.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
 

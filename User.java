@@ -29,7 +29,7 @@ public class User {
      * @return ArrayList<User>
      */
     public static ArrayList<User> getUsersFromUserTable(String userTable) {
-        String[] rows = userTable.split("\n");
+        String[] rows = userTable.split("%n");
         ArrayList<User> users = new ArrayList<>();
         for (String row : rows) {
             String[] userData = row.split(" ");
