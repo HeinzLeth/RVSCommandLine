@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
  safdf * To change this license header, choose License Headers in Project Properties.
+=======
+ * To change this license header, choose License Headers in Project Properties.
+>>>>>>> parent of ccafd38... edit
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
@@ -13,6 +17,7 @@ import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+<<<<<<< HEAD
 /*
  * Echo crasht nachdem wir ausloggen. Testclient nicht??
  * */
@@ -21,35 +26,53 @@ public class Chat {
     /**
      * Wartet auf Server-IP-Adressen-,Port- und Nutzernameneingabe. Bei
      * erfolgreicher Eingabe: Verbindung zum Server
+=======
+public class Chat {
+
+    /**
+     * Wartet auf IP-Adressen und Nutzernameneingabe - Bei erfolgreicher
+     * Anmeldung: Verbindung zum Server
+>>>>>>> parent of ccafd38... edit
      *
      * @param args the command line arguments
      */
     public static void main(String[] args) {
         try {
+            // TODO code application logic here            
 
             int serverPort = 2534;
 
             BufferedReader userIn = new BufferedReader(new InputStreamReader(System.in));
+            //Scanner scanner = new Scanner(System.in);
 
             Socket mySocket = null;
             int clientPort = 0;
             boolean isCorrectIp = false;
             while (!isCorrectIp) {
-                System.out.println("Type in server-IP-address");
+                System.out.println("Server ip eingeben:");
                 String serverIp = userIn.readLine();
 
+<<<<<<< HEAD
                 //Abfrage bis ein valider Port eingegeben wurde
+=======
+                //String ipServer = "";
+                //String ipClient = ipServer;
+                System.out.println("Port eingeben:");
+>>>>>>> parent of ccafd38... edit
                 boolean isPortInt = false;
                 while (!isPortInt) {
                     try {
-                        System.out.println("Choose a port between 50000 & 65000:");
                         clientPort = Integer.parseInt(userIn.readLine());
+<<<<<<< HEAD
                         if (clientPort > 49999 && clientPort < 65001) {
                             isPortInt = true;
                         }
 
+=======
+                        isPortInt = true;
+>>>>>>> parent of ccafd38... edit
                     } catch (NumberFormatException e) {
-                        System.out.println("A port consists of integers!");
+                        System.out.println("Gib eine Zahl ein");
                     }
                 }
                 //Abfrage ob der Server unter der IP-Adresse zu erreichen ist, falls nicht neuer Versuch.
@@ -58,7 +81,7 @@ public class Chat {
                     mySocket.connect(new InetSocketAddress(serverIp, serverPort));
                     isCorrectIp = true;
                 } catch (Exception e) {
-                    System.out.println("Wrong server-IP-address!");
+                    System.out.println("Die IP-Adresse ist falsch");
                 }
             }
             ServerSocket ssocket = new ServerSocket();
@@ -69,7 +92,11 @@ public class Chat {
             BufferedReader in = new BufferedReader(new InputStreamReader(mySocket.getInputStream()));
             String userInput = "";
 
+<<<<<<< HEAD
             //Der eigene Benutzername wird als User abgespeichert
+=======
+            //String userName = "";
+>>>>>>> parent of ccafd38... edit
             User user = new User();
             boolean isConnected = false;
             while (!isConnected) {

@@ -75,6 +75,7 @@ public class ContactHandler extends Thread implements Connection.DeleteUserListe
                     try {
                         peer = new Socket();
                         peer.connect(new InetSocketAddress(onlineUser.getIp(), onlineUser.getPort()));
+
                         Connection connection = new Connection(peer, onlineUser);
                         connections.add(connection);
                         connection.registerListener(this);
@@ -157,6 +158,7 @@ public class ContactHandler extends Thread implements Connection.DeleteUserListe
             }
         }
     }
+<<<<<<< HEAD
 
     public User getUser() {
         return user;
@@ -173,4 +175,6 @@ public class ContactHandler extends Thread implements Connection.DeleteUserListe
         this.connections.remove(connection);
     }
 
+=======
+>>>>>>> parent of ccafd38... edit
 }
