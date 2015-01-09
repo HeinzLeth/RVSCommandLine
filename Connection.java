@@ -132,6 +132,7 @@ public class Connection extends Thread {
                     System.out.println(user.getName() + ": " + clientMessage);
                 } else if (input.startsWith(Commands.Server.logout)) {
 <<<<<<< HEAD
+<<<<<<< HEAD
                     if (input.length() > 1) {
                         String clientMessage = input.substring(2);
                         System.out.println(user.getName() + ": " + clientMessage);
@@ -139,6 +140,11 @@ public class Connection extends Thread {
                     } else {
                         System.out.println(user.getName() + " has left the chat and is offline.");
                     }
+=======
+                    String clientMessage = input.substring(2);
+                    System.out.println(user.getName() + ": " + clientMessage);
+                    System.out.println(user.getName() + " has left the chat and is offline.");
+>>>>>>> parent of ccafd38... edit
 =======
                     String clientMessage = input.substring(2);
                     System.out.println(user.getName() + ": " + clientMessage);

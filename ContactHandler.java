@@ -159,6 +159,7 @@ public class ContactHandler extends Thread implements Connection.DeleteUserListe
         }
     }
 <<<<<<< HEAD
+<<<<<<< HEAD
 
     public User getUser() {
         return user;
@@ -175,6 +176,8 @@ public class ContactHandler extends Thread implements Connection.DeleteUserListe
         this.connections.remove(connection);
     }
 
+=======
+>>>>>>> parent of ccafd38... edit
 =======
 >>>>>>> parent of ccafd38... edit
 }

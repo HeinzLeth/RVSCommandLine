@@ -1,6 +1,10 @@
 /*
 <<<<<<< HEAD
+<<<<<<< HEAD
  safdf * To change this license header, choose License Headers in Project Properties.
+=======
+ * To change this license header, choose License Headers in Project Properties.
+>>>>>>> parent of ccafd38... edit
 =======
  * To change this license header, choose License Headers in Project Properties.
 >>>>>>> parent of ccafd38... edit
@@ -18,6 +22,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 /*
  * Echo crasht nachdem wir ausloggen. Testclient nicht??
  * */
@@ -27,11 +32,16 @@ public class Chat {
      * Wartet auf Server-IP-Adressen-,Port- und Nutzernameneingabe. Bei
      * erfolgreicher Eingabe: Verbindung zum Server
 =======
+=======
+>>>>>>> parent of ccafd38... edit
 public class Chat {
 
     /**
      * Wartet auf IP-Adressen und Nutzernameneingabe - Bei erfolgreicher
      * Anmeldung: Verbindung zum Server
+<<<<<<< HEAD
+>>>>>>> parent of ccafd38... edit
+=======
 >>>>>>> parent of ccafd38... edit
      *
      * @param args the command line arguments
@@ -53,7 +63,13 @@ public class Chat {
                 String serverIp = userIn.readLine();
 
 <<<<<<< HEAD
+<<<<<<< HEAD
                 //Abfrage bis ein valider Port eingegeben wurde
+=======
+                //String ipServer = "";
+                //String ipClient = ipServer;
+                System.out.println("Port eingeben:");
+>>>>>>> parent of ccafd38... edit
 =======
                 //String ipServer = "";
                 //String ipClient = ipServer;
@@ -64,10 +80,14 @@ public class Chat {
                     try {
                         clientPort = Integer.parseInt(userIn.readLine());
 <<<<<<< HEAD
+<<<<<<< HEAD
                         if (clientPort > 49999 && clientPort < 65001) {
                             isPortInt = true;
                         }
 
+=======
+                        isPortInt = true;
+>>>>>>> parent of ccafd38... edit
 =======
                         isPortInt = true;
 >>>>>>> parent of ccafd38... edit
@@ -93,7 +113,11 @@ public class Chat {
             String userInput = "";
 
 <<<<<<< HEAD
+<<<<<<< HEAD
             //Der eigene Benutzername wird als User abgespeichert
+=======
+            //String userName = "";
+>>>>>>> parent of ccafd38... edit
 =======
             //String userName = "";
 >>>>>>> parent of ccafd38... edit

@@ -31,6 +31,7 @@ public class UserInput extends Thread {
     }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     /**
      * zeigt dem Benutzer die Hilfe-Tabelle
      */
@@ -41,11 +42,16 @@ public class UserInput extends Thread {
         System.out.println("#quit             :    closes all connections and goes offline");
         System.out.println("@NAME             :    sends message to NAME");
 =======
+=======
+>>>>>>> parent of ccafd38... edit
     public void showHelpTable() {
         System.out.println("---------------Help---------------");
         System.out.println("#help             :    shows HelpTable");
         System.out.println("@NAME             :    sends message to NAME");
         System.out.println("#whoisonline      :    shows who is online on the server");
+<<<<<<< HEAD
+>>>>>>> parent of ccafd38... edit
+=======
 >>>>>>> parent of ccafd38... edit
     }
 
@@ -53,6 +59,7 @@ public class UserInput extends Thread {
     public void run() {
 
         try {
+<<<<<<< HEAD
 <<<<<<< HEAD
             in = new BufferedReader(new InputStreamReader(System.in,
                     StandardCharsets.UTF_8.name()));
@@ -131,6 +138,45 @@ public class UserInput extends Thread {
                         }
                     } else {
 
+=======
+            in = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8.name()));
+            while (!terminate) {
+                try {
+                    String input = in.readLine();
+                    String[] commandSplit = input.split(" ", 2);
+
+                    if (commandSplit.length == 1) {
+                        if (commandSplit[0].startsWith("#")) {
+                            commandSplit[0] = commandSplit[0].substring(1);
+                            switch (commandSplit[0]) {
+                                case Commands.UserInput.whoIsOnline:
+                                    contactHandler.printOnline();
+                                    break;
+                                case Commands.UserInput.help:
+                                    showHelpTable();
+                                    break;
+                                case Commands.UserInput.quit:
+                                    contactHandler.closeAll();
+                                    this.terminate = true;
+                                    break;
+                                default:
+                                    System.out.println("Gib was richtiges ein!");
+                                    break;
+                            }
+                        } else {
+                            System.out.println("# ist das Zeichen für ein Kommando!");
+                            showHelpTable();
+                        }
+                    } else if (commandSplit.length == 2) {
+                        if (commandSplit[0].startsWith(Commands.UserInput.message)) {
+                            contactHandler.sendMessage(new User(commandSplit[0].substring(1)), commandSplit[1]);
+                        } else {
+                            System.out.println("Gib was richtiges ein!");
+                            showHelpTable();
+                        }
+                    } else {
+
+>>>>>>> parent of ccafd38... edit
                     }
                 } catch (IOException ex) {
                     Logger.getLogger(UserInput.class.getName()).log(Level.SEVERE, null, ex);
@@ -138,6 +184,9 @@ public class UserInput extends Thread {
             }
         } catch (UnsupportedEncodingException ex) {
             Logger.getLogger(UserInput.class.getName()).log(Level.SEVERE, null, ex);
+<<<<<<< HEAD
+>>>>>>> parent of ccafd38... edit
+=======
 >>>>>>> parent of ccafd38... edit
         }
     }
