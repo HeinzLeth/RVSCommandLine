@@ -8,6 +8,7 @@ package chat;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.ConnectException;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -32,8 +33,8 @@ public class ContactHandler extends Thread implements Connection.DeleteUserListe
 
     private boolean terminate;
     private final User user;
-    private ArrayList<User> onlineUsers; //Liste alle Online Users
-    private LinkedList<Connection> connections; //Liste alle peer-to-peer Verbindungen
+    private ArrayList<User> onlineUsers;
+    private LinkedList<Connection> connections;
 
     public ContactHandler(ServerSocket serverSocket, Socket clientSocket, BufferedReader fromServer, PrintWriter toServer, User user) {
         this.serverSocket = serverSocket;
@@ -44,6 +45,7 @@ public class ContactHandler extends Thread implements Connection.DeleteUserListe
         this.user = user;
         this.onlineUsers = new ArrayList<>();
         this.connections = new LinkedList<>();
+        this.printOnline();
     }
 
     /**
@@ -67,7 +69,7 @@ public class ContactHandler extends Thread implements Connection.DeleteUserListe
         }
         //Wenn nicht wird beim Server die Liste der aktuell eingeloggten Benutzer abgefragt und durchgegangen.
         if (!sent) {
-            this.receiveAndStoreOnlineUsers();
+            this.showOnline();
             for (User onlineUser : onlineUsers) {
                 if (onlineUser.equals(u)) {
 
@@ -82,8 +84,9 @@ public class ContactHandler extends Thread implements Connection.DeleteUserListe
                         connection.makeFirstContact(user);
                         connection.sendMessage(message);
                         sent = true;
+                    } catch (ConnectException e) {
+                        System.out.println("The connection to " + u.getName() + " is lost.");
                     } catch (IOException ex) {
-                        Logger.getLogger(ContactHandler.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
             }
@@ -97,37 +100,32 @@ public class ContactHandler extends Thread implements Connection.DeleteUserListe
     /**
      * Holt sich die Online-Tabelle vom Server
      */
-    public void receiveAndStoreOnlineUsers() {
+    public void showOnline() {
         try {
-            toServer.write(Commands.Server.userTable + "%n");
+            toServer.write(Commands.Server.userTable + "\n");
             toServer.flush();
             String string = fromServer.readLine();
 
-            if(toServer.checkError()){
-                System.out.println("Server connection closed");
-            }
             String userTable = "";
             for (int i = 0; i < Integer.valueOf(String.valueOf(string.charAt(2))); i++) {
-                userTable += fromServer.readLine() + "%n";
+                userTable += fromServer.readLine() + "\n";
             }
             onlineUsers = User.getUsersFromUserTable(userTable);
+        } catch (SocketException se) {
+            System.out.println("Server not reachable...");
         } catch (IOException ex) {
+            Logger.getLogger(ContactHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    /**
-     * Zeigt die Online-User an.
-     */
     public void printOnline() {
-        this.receiveAndStoreOnlineUsers();
+        this.showOnline();
+        System.out.println("------Online Users------");
         for (User u : onlineUsers) {
             System.out.println(u.getName());
         }
     }
 
-    /**
-     * Schließt alle Verbidungen die es gibt.
-     */
     public void closeAll() {
         try {
             Iterator<Connection> iter = connections.iterator();
@@ -138,6 +136,7 @@ public class ContactHandler extends Thread implements Connection.DeleteUserListe
             serverSocket.close();
             clientSocket.close();
         } catch (IOException ex) {
+            Logger.getLogger(ContactHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -157,6 +156,7 @@ public class ContactHandler extends Thread implements Connection.DeleteUserListe
             } catch (SocketException exception) {
                 System.out.println("ServerSocket closed");
             } catch (IOException ex) {
+                Logger.getLogger(ContactHandler.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
@@ -165,11 +165,6 @@ public class ContactHandler extends Thread implements Connection.DeleteUserListe
         return user;
     }
 
-    /**
-     * löscht den User und die Verbindung aus den Listen
-     * @param user
-     * @param connection
-     */
     @Override
     public void deleteUser(User user, Connection connection) {
         this.onlineUsers.remove(user);

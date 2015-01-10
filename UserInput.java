@@ -28,6 +28,7 @@ public class UserInput extends Thread {
         scanner = new Scanner(System.in);
         this.contactHandler = ch;
         this.terminate = false;
+        this.showHelpTable();
     }
 
     /**
@@ -50,10 +51,8 @@ public class UserInput extends Thread {
             while (!terminate) {
                 try {
                     String input = in.readLine();
-                    //trennt die Befehle am Leerzeichen, aber maximal an 2
                     String[] commandSplit = input.split(" ", 2);
 
-                    //Befehl ohne Leerzeichen
                     if (commandSplit.length == 1) {
                         if (commandSplit[0].startsWith("#")) {
                             commandSplit[0] = commandSplit[0].substring(1);
@@ -76,7 +75,6 @@ public class UserInput extends Thread {
                             System.out.println("# is the command character!");
                             showHelpTable();
                         }
-                        //Befehel mit Leerzeichen (Nachricht)
                     } else if (commandSplit.length == 2) {
                         if (commandSplit[0]
                                 .startsWith(Commands.UserInput.message)) {
@@ -91,6 +89,8 @@ public class UserInput extends Thread {
                         } else {
                             showHelpTable();
                         }
+                    } else {
+
                     }
                 } catch (IOException ex) {
                 }

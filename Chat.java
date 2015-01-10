@@ -12,6 +12,8 @@ import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 /*
  * Echo crasht nachdem wir ausloggen. Testclient nicht??
@@ -66,7 +68,7 @@ public class Chat {
 
             //Reader für Socket-Eingang und Writer für Socket-Ausgang
             PrintWriter out = new PrintWriter(mySocket.getOutputStream(), true);
-            BufferedReader in = new BufferedReader(new InputStreamReader(mySocket.getInputStream()));
+            BufferedReader in = new BufferedReader(new InputStreamReader(mySocket.getInputStream(), StandardCharsets.UTF_8.name()));
             String userInput = "";
 
             //Der eigene Benutzername wird als User abgespeichert
@@ -85,7 +87,7 @@ public class Chat {
                 user.setPort(clientPort);
 
                 //Formatiert die Eingabe gemäß Protokoll zum korrekten Senden des Logins an den Server 
-                out.write(String.format("%s %s %s%n", Commands.Client.login, userInput, clientPort));
+                out.write(String.format("%s %s %s\n", Commands.Client.login, userInput, clientPort));
                 out.flush();
                 String answer = in.readLine();
                 if (answer.equals(Commands.Server.loginSucessfull)) {
@@ -108,6 +110,7 @@ public class Chat {
             input.start();
 
         } catch (IOException ex) {
+            System.err.println("Fehler im Program");
         }
     }
 
