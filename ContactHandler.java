@@ -69,26 +69,28 @@ public class ContactHandler extends Thread implements Connection.DeleteUserListe
         }
         //Wenn nicht wird beim Server die Liste der aktuell eingeloggten Benutzer abgefragt und durchgegangen.
         if (!sent) {
-            this.showOnline();
-            for (User onlineUser : onlineUsers) {
-                if (onlineUser.equals(u)) {
-
-                    //Es wird ein neuer Socket erzeugt mit den vom Server uebergebenen Benutzerdaten.
-                    try {
-                        peer = new Socket();
-                        peer.connect(new InetSocketAddress(onlineUser.getIp(), onlineUser.getPort()));
-                        Connection connection = new Connection(peer, onlineUser);
-                        connections.add(connection);
-                        connection.registerListener(this);
-                        connection.start();
-                        connection.makeFirstContact(user);
-                        connection.sendMessage(message);
-                        sent = true;
-                    } catch (ConnectException e) {
-                        System.out.println("The connection to " + u.getName() + " is lost.");
-                    } catch (IOException ex) {
+            try {
+                this.showOnline();
+                for (User onlineUser : onlineUsers) {
+                    if (onlineUser.equals(u)) {
+                        try {
+                            //Es wird ein neuer Socket erzeugt mit den vom Server uebergebenen Benutzerdaten.
+                            peer = new Socket();
+                            peer.connect(new InetSocketAddress(onlineUser.getIp(), onlineUser.getPort()));
+                            Connection connection = new Connection(peer, onlineUser);
+                            connections.add(connection);
+                            connection.registerListener(this);
+                            connection.start();
+                            connection.makeFirstContact(user);
+                            connection.sendMessage(message);
+                            sent = true;
+                        } catch (ConnectException e) {
+                            System.out.println("The connection to " + u.getName() + " is lost.");
+                        } catch (IOException ex) {
+                        }
                     }
                 }
+            } catch (IOException ex) {
             }
         }
         //Falls kein Benutzer mit diesem Namen existiert, wird dies angezeigt.
@@ -99,30 +101,32 @@ public class ContactHandler extends Thread implements Connection.DeleteUserListe
 
     /**
      * Holt sich die Online-Tabelle vom Server
+     *
      */
-    public void showOnline() {
-        try {
-            toServer.write(Commands.Server.userTable + "\n");
-            toServer.flush();
-            String string = fromServer.readLine();
+    public void showOnline() throws IOException {
+        toServer.write(Commands.Server.userTable + "\n");
+        toServer.flush();
+        String string = fromServer.readLine();
 
-            String userTable = "";
-            for (int i = 0; i < Integer.valueOf(String.valueOf(string.charAt(2))); i++) {
-                userTable += fromServer.readLine() + "\n";
-            }
-            onlineUsers = User.getUsersFromUserTable(userTable);
-        } catch (SocketException se) {
-            System.out.println("Server not reachable...");
-        } catch (IOException ex) {
-            Logger.getLogger(ContactHandler.class.getName()).log(Level.SEVERE, null, ex);
+        String userTable = "";
+        for (int i = 0; i < Integer.valueOf(String.valueOf(string.charAt(2))); i++) {
+            userTable += fromServer.readLine() + "\n";
         }
+        onlineUsers = User.getUsersFromUserTable(userTable);
     }
 
     public void printOnline() {
-        this.showOnline();
-        System.out.println("------Online Users------");
-        for (User u : onlineUsers) {
-            System.out.println(u.getName());
+        try {
+            this.showOnline();
+            System.out.println("------Online Users------");
+            for (User u : onlineUsers) {
+                System.out.println(u.getName());
+            }
+
+        } catch (SocketException e) {
+            System.out.println("Server not reachable...");
+        } catch (IOException ex) {
+            Logger.getLogger(ContactHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
