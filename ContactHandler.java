@@ -90,7 +90,9 @@ public class ContactHandler extends Thread implements Connection.DeleteUserListe
                         }
                     }
                 }
+                //Falls der Sever nicht erreichbar ist, wirft showOnline eine IOException.
             } catch (IOException ex) {
+                System.out.println("Server not reachable...");
             }
         }
         //Falls kein Benutzer mit diesem Namen existiert, wird dies angezeigt.
@@ -126,7 +128,6 @@ public class ContactHandler extends Thread implements Connection.DeleteUserListe
         } catch (SocketException e) {
             System.out.println("Server not reachable...");
         } catch (IOException ex) {
-            Logger.getLogger(ContactHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -140,7 +141,6 @@ public class ContactHandler extends Thread implements Connection.DeleteUserListe
             serverSocket.close();
             clientSocket.close();
         } catch (IOException ex) {
-            Logger.getLogger(ContactHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -160,7 +160,6 @@ public class ContactHandler extends Thread implements Connection.DeleteUserListe
             } catch (SocketException exception) {
                 System.out.println("ServerSocket closed");
             } catch (IOException ex) {
-                Logger.getLogger(ContactHandler.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }

@@ -128,7 +128,8 @@ public class Connection extends Thread {
                     peer.close();
                     this.terminate();
                 }
-                //wenn der Benutzer ohne logout den Chat verlässt
+
+                //wenn ein Benutzer ohne logout den Chat verlässt
             } catch (SocketException e) {
                 if (!peer.isClosed()) {
                     try {
@@ -138,10 +139,20 @@ public class Connection extends Thread {
                     } catch (IOException ex) {
                     }
                 }
-            } catch (IOException ex) {
+            } catch (IOException e) {
+            }
+            //wenn ein Benutzer ohne logout den Chat verlässt (Weil der BufferedReader ein null zurueckgibt)
+            catch (NullPointerException e) {
+                if (!peer.isClosed()) {
+                    try {
+                        peer.close();
+                        this.terminate();
+                        System.out.println(user.getName() + " has unexpected left the chat and is offline.");
+                    } catch (IOException ex) {
+                    }
+                }
             }
         }
-
     }
 
     public void setIsNameSet(boolean isNameSet) {
