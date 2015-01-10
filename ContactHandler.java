@@ -32,8 +32,8 @@ public class ContactHandler extends Thread implements Connection.DeleteUserListe
 
     private boolean terminate;
     private final User user;
-    private ArrayList<User> onlineUsers;
-    private LinkedList<Connection> connections;
+    private ArrayList<User> onlineUsers; //Liste alle Online Users
+    private LinkedList<Connection> connections; //Liste alle peer-to-peer Verbindungen
 
     public ContactHandler(ServerSocket serverSocket, Socket clientSocket, BufferedReader fromServer, PrintWriter toServer, User user) {
         this.serverSocket = serverSocket;
@@ -75,7 +75,6 @@ public class ContactHandler extends Thread implements Connection.DeleteUserListe
                     try {
                         peer = new Socket();
                         peer.connect(new InetSocketAddress(onlineUser.getIp(), onlineUser.getPort()));
-
                         Connection connection = new Connection(peer, onlineUser);
                         connections.add(connection);
                         connection.registerListener(this);
@@ -104,6 +103,9 @@ public class ContactHandler extends Thread implements Connection.DeleteUserListe
             toServer.flush();
             String string = fromServer.readLine();
 
+            if(toServer.checkError()){
+                System.out.println("Server connection closed");
+            }
             String userTable = "";
             for (int i = 0; i < Integer.valueOf(String.valueOf(string.charAt(2))); i++) {
                 userTable += fromServer.readLine() + "%n";
@@ -158,8 +160,6 @@ public class ContactHandler extends Thread implements Connection.DeleteUserListe
             }
         }
     }
-<<<<<<< HEAD
-<<<<<<< HEAD
 
     public User getUser() {
         return user;
@@ -176,8 +176,4 @@ public class ContactHandler extends Thread implements Connection.DeleteUserListe
         this.connections.remove(connection);
     }
 
-=======
->>>>>>> parent of ccafd38... edit
-=======
->>>>>>> parent of ccafd38... edit
 }
