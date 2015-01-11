@@ -111,13 +111,13 @@ public class Connection extends Thread {
 
             try {
                 String input = this.in.readLine();
-                if (!isNameSet && input.startsWith(Commands.Client.login)) {
+                if (input != null && !isNameSet && input.startsWith(Commands.Client.login)) {
                     user.setName(input.substring(1));
                     this.isNameSet = true;
-                } else if (input.startsWith(Commands.Client.message)) {
+                } else if (input != null && input.startsWith(Commands.Client.message)) {
                     String clientMessage = input.substring(2);
                     System.out.println(user.getName() + ": " + clientMessage);
-                } else if (input.startsWith(Commands.Server.logout)) {
+                } else if (input != null && input.startsWith(Commands.Server.logout)) {
                     if (input.length() > 1) {
                         String clientMessage = input.substring(2);
                         System.out.println(user.getName() + ": " + clientMessage);
@@ -141,22 +141,7 @@ public class Connection extends Thread {
                 }
             } catch (IOException e) {
             }
-            //wenn ein Benutzer ohne logout den Chat verlässt (Weil der BufferedReader ein null zurueckgibt)
-            catch (NullPointerException e) {
-                if (!peer.isClosed()) {
-                    try {
-                        peer.close();
-                        this.terminate();
-                        System.out.println(user.getName() + " has unexpected left the chat and is offline.");
-                    } catch (IOException ex) {
-                    }
-                }
-            }
         }
-    }
-
-    public void setIsNameSet(boolean isNameSet) {
-        this.isNameSet = isNameSet;
     }
 
 }

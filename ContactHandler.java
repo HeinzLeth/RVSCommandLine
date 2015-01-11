@@ -104,6 +104,7 @@ public class ContactHandler extends Thread implements Connection.DeleteUserListe
     /**
      * Holt sich die Online-Tabelle vom Server
      *
+     * @throws java.io.IOException
      */
     public void showOnline() throws IOException {
         toServer.write(Commands.Server.userTable + "\n");
